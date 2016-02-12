@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document>
+	<library imageRootPath="icons" product="DMT" symbol="dmtjeenetbeansdiscoverer" version="1.0"
+	         dependencies="delivery:1.4;dmtdevjeetechno:1.2">
+		
+        <entity symbol="JeeNetBeansDiscoverer" baseEntity="dmtdevjeetechno.J2EESourcesBaseDiscoverer" label="NetBeans Java project" viewForm="subForm">
+            <field length="500" override="true" symbol="javaClassName" valueEntity="system.String">
+                <value formula="true">'com.castsoftware.dmt.discoverer.jee.netbeans.JeeNetbeansProjectsDiscoverer'</value>
+            </field>
+            <field override="true" symbol="projectsFilesPatterns">
+                <value formula="true">'project.xml'</value>
+            </field>
+            <field override="true" symbol="resourceProjectsPatterns">
+                <value formula="true">'genfiles.properties'</value>
+            </field>
+        </entity>
+
+	</library>
+	
+	<conversion requires="" provides="dmtjeenetbeansdiscoverer:1.0">
+		<!-- Library installation -->
+	</conversion>	
+</document>
