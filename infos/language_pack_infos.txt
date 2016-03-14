@@ -1,4 +1,0 @@
-LPVERS=1.0.0
-EXT_NAME=JEE-NetBeans
-DEPENDENCIES=dmtjeenetbeansdiscoverer-1.0.0.dmtplugin
-PLUGIN_DELIVERY=dmtjeenetbeansdiscoverer
