@@ -68,4 +68,15 @@ public class JeeNetbeansProjectsDiscovererUnitTest
         new JeeNetbeansProjectsDiscovererTester("Test1").go();
     }
 
+    /**
+     * Test discovery of the project dbCopier
+     *
+     * @throws Throwable
+     *             if anything goes wrong
+     */
+    @Test
+    public void unitTest2() throws Throwable
+    {
+        new JeeNetbeansProjectsDiscovererTester("Test2").go();
+    }
 }

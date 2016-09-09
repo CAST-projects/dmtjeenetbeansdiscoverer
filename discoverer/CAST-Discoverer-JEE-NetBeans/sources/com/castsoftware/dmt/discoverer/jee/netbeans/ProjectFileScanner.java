@@ -8,10 +8,10 @@ import java.util.Set;
 
 import org.xml.sax.Attributes;
 
+import com.castsoftware.dmt.engine.discovery.IProjectsDiscovererUtilities;
 import com.castsoftware.dmt.engine.discovery.ProjectsDiscovererWrapper.ProfileOrProjectTypeConfiguration.LanguageConfiguration;
 import com.castsoftware.dmt.engine.project.IResourceReadOnly;
 import com.castsoftware.dmt.engine.project.Profile;
-import com.castsoftware.dmt.engine.project.Profile.Language;
 import com.castsoftware.dmt.engine.project.Project;
 import com.castsoftware.util.StringHelper;
 import com.castsoftware.util.logger.Logging;
@@ -247,10 +247,15 @@ public class ProjectFileScanner
                 	else if ("compilation-unit".equals(elementName))
                 	{
                 		isInCompilationUnit = false;
-                		// TODO: split the list
+                		// separator used in classpath can be either : or ;
                 		List<String> classpathList = StringHelper.getStringList(classpath, ":");
                 		for (String path : classpathList)
-                			interpreter.addClasspath(path);
+                		{
+                			List<String> classpathList2 = StringHelper.getStringList(path, ";");
+                    		for (String path2 : classpathList2)
+                    			interpreter.addClasspath(path2);
+                		}
+                    	classpath = "";
                 	}
                 	else if ("classpath".equals(elementName))
                 	{
@@ -330,45 +335,17 @@ public class ProjectFileScanner
         private final Set<String> exports;
         private final Set<String> sourceFolders;
         private final Set<String> classpaths;
-        private int javaLanguageId = -1;
-        private int JavaContainerLanguageId = -1;
+        private final int javaLanguageId;
+        private final int javaContainerLanguageId;
 
-        private ProjectRecorder(Project project, Set<String> exports)
+        private ProjectRecorder(Project project, Set<String> exports, int javaLanguageId, int javaContainerLanguageId)
         {
             this.project = project;
             this.exports = exports;
+            this.javaLanguageId = javaLanguageId;
+            this.javaContainerLanguageId = javaContainerLanguageId;
             sourceFolders = new HashSet<String>();
             classpaths = new HashSet<String>();
-            /*
-            for (LanguageConfiguration languageConfiguration : getProjectsDiscovererUtilities().getProjectTypeConfiguration(
-                    project.getType()).getLanguageConfigurations())
-                {
-                    int languageId = languageConfiguration.getLanguageId();
-                    if ("javaLanguage".equals(languageConfiguration.getLanguageName()))
-                    	javaLanguageId = languageId;
-                    if ("javaContainerLanguage".equals(languageConfiguration.getLanguageName()))
-                    	JavaContainerLanguageId = languageId;
-                }
-            */
-            for (Language language : project.getLanguages())
-            {
-                if ("JavaLanguage".equals(language.getName()))
-                {
-                    javaLanguageId = language.getId();
-                    
-                    break;
-                }
-            }
-            if (javaLanguageId == -1)
-            {
-                javaLanguageId = 1;
-                Logging.warn("cast.dmt.discover.jee.netbeans.getJavaLanguageFailure");
-            }
-            if (JavaContainerLanguageId == -1)
-            {
-            	JavaContainerLanguageId = 2;
-                //Logging.warn("cast.dmt.discover.jee.netbeans.getJavaContainerLanguageFailure");
-            }
         }
 
         @Override
@@ -433,10 +410,11 @@ public class ProjectFileScanner
             {
                 if (path.toLowerCase().endsWith(".jar"))
                     project.addContainerReference(buildPackageRelativePath(project, "../".concat(path)), javaLanguageId,
-                        JavaContainerLanguageId);
+                        javaContainerLanguageId);
                 else
-                    project.addDirectoryReference(buildPackageRelativePath(project, "../".concat(path)), javaLanguageId,
-                        JavaContainerLanguageId);
+                	// do not add the classpath if it's already the sources
+                	if (!sourceFolders.contains(path))
+                		project.addDirectoryReference(buildPackageRelativePath(project, "../".concat(path)), javaLanguageId, javaContainerLanguageId);
             }
 		}
     }
@@ -468,14 +446,43 @@ public class ProjectFileScanner
      *            the project containing this file
      * @param projectContent
      *            the file content to scan.
+     * @param javaLanguageId
+     *            the java language ID to use to reference java files and folders.
+     * @param javaContainerLanguageId
+     *            the java container language ID to use to reference jar files or classpath.
      * @return null if an error was encountered during scanning. Otherwise a set containing the project natures.
      */
-    public static Set<String> scan(Project project, String projectContent)
+    public static Set<String> scan(Project project, String projectContent, IProjectsDiscovererUtilities projectsDiscovererUtilities)
     {
-
+    	int javaLanguageId = -1;
+    	int javaContainerLanguageId = -1;
         Set<String> exports = new HashSet<String>();
 
-        IProjectInterpreter interpreter = new ProjectRecorder(project, exports);
+        for (LanguageConfiguration languageConfiguration : projectsDiscovererUtilities.getProjectTypeConfiguration(project.getType()).getLanguageConfigurations())
+        {
+            int languageId = languageConfiguration.getLanguageId();
+            if ("JavaLanguage".equals(languageConfiguration.getLanguageName()))
+            {
+            	javaLanguageId = languageId;
+            	//TODO: not available in 7.3.x API => hardcoded value
+            	/*
+                if ("JavaContainerLanguage".equals(languageConfiguration.getLanguageName()))
+                	javaContainerLanguageId = languageId;
+                */
+                if (javaContainerLanguageId == -1)
+                {
+                	javaContainerLanguageId = 1;
+                    //Logging.managedError("cast.dmt.discover.jee.netbeans.getJavaContainerLanguageFailure");
+                }
+            	break;
+            }
+        }
+        if (javaLanguageId == -1)
+        {
+            Logging.managedError("cast.dmt.discover.jee.netbeans.getJavaLanguageFailure");
+        }
+        
+        IProjectInterpreter interpreter = new ProjectRecorder(project, exports, javaLanguageId, javaContainerLanguageId);
         if (!scan(interpreter, project.getPath(), projectContent))
             return null;
         return exports;

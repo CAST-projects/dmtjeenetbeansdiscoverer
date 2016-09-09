@@ -24,13 +24,13 @@ public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapte
         IProjectsDiscovererUtilities projectsDiscovererUtilities)
     {
         String projectDescriptor = project.getMetadata(IProfileReadOnly.METADATA_DESCRIPTOR).getValue();
-        if ((!projectDescriptor.equals("project.xml")) || (!parseProjectFile(project, content)))
+        if ((!projectDescriptor.equals("project.xml")) || (!parseProjectFile(project, content, projectsDiscovererUtilities)))
             projectsDiscovererUtilities.deleteProject(project.getId());
     }
 
-    private static boolean parseProjectFile(Project project, String content)
+    private static boolean parseProjectFile(Project project, String content, IProjectsDiscovererUtilities projectsDiscovererUtilities)
     {
-        Set<String> exports = ProjectFileScanner.scan(project, content);
+        Set<String> exports = ProjectFileScanner.scan(project, content, projectsDiscovererUtilities);
         if ((exports == null) || (exports.size() == 0))
             // no export = this project doesn't generate a jar
             return false;
