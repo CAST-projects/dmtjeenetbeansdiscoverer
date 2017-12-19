@@ -27,17 +27,25 @@
    </Language>
   </Languages>
   <Sources>
+   <SourceDirectory sourceDirectoryRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../src/runtime" languageId="1" sourceDirectorySize="0">
+   </SourceDirectory>
    <SourceDirectory sourceDirectoryRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../gen/taglib" languageId="1" sourceDirectorySize="0">
    </SourceDirectory>
    <SourceDirectory sourceDirectoryRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../gen/beaninfo" languageId="1" sourceDirectorySize="0">
    </SourceDirectory>
    <SourceDirectory sourceDirectoryRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../src/designtime" languageId="1" sourceDirectorySize="0">
    </SourceDirectory>
-   <SourceDirectory sourceDirectoryRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../src/runtime" languageId="1" sourceDirectorySize="0">
-   </SourceDirectory>
   </Sources>
   <Resources>
+   <FileReference fileRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/project.properties" languageId="-1" resourceTypeId="0" fileSize="0">
+   </FileReference>
+   <DirectoryReference directoryRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../gen/taglib" languageId="1" resourceTypeId="1" directorySize="0">
+   </DirectoryReference>
+   <DirectoryReference directoryRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../gen/beaninfo" languageId="1" resourceTypeId="1" directorySize="0">
+   </DirectoryReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/commons-digester.jar" languageId="1" resourceTypeId="1" containerSize="0">
+   </ContainerReference>
+   <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../build/complib/webui-jsf.jar" languageId="1" resourceTypeId="1" containerSize="0">
    </ContainerReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/rowset.jar" languageId="1" resourceTypeId="1" containerSize="0">
    </ContainerReference>
@@ -45,10 +53,14 @@
    </ContainerReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/jsp-api.jar" languageId="1" resourceTypeId="1" containerSize="0">
    </ContainerReference>
+   <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/dataprovider.jar" languageId="1" resourceTypeId="1" containerSize="0">
+   </ContainerReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/jstl.jar" languageId="1" resourceTypeId="1" containerSize="0">
    </ContainerReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/commons-collections.jar" languageId="1" resourceTypeId="1" containerSize="0">
    </ContainerReference>
+   <DirectoryReference directoryRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../src/designtime" languageId="1" resourceTypeId="1" directorySize="0">
+   </DirectoryReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/jsf-api.jar" languageId="1" resourceTypeId="1" containerSize="0">
    </ContainerReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/portlet.jar" languageId="1" resourceTypeId="1" containerSize="0">
@@ -61,6 +73,8 @@
    </ContainerReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/commons-logging.jar" languageId="1" resourceTypeId="1" containerSize="0">
    </ContainerReference>
+   <DirectoryReference directoryRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../src/runtime" languageId="1" resourceTypeId="1" directorySize="0">
+   </DirectoryReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/commons-beanutils.jar" languageId="1" resourceTypeId="1" containerSize="0">
    </ContainerReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/javaee.jar" languageId="1" resourceTypeId="1" containerSize="0">
@@ -70,10 +84,6 @@
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/jsf-impl.jar" languageId="1" resourceTypeId="1" containerSize="0">
    </ContainerReference>
    <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/creator/propertyeditors.jar" languageId="1" resourceTypeId="1" containerSize="0">
-   </ContainerReference>
-   <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../build/complib/webui-jsf.jar" languageId="1" resourceTypeId="1" containerSize="0">
-   </ContainerReference>
-   <ContainerReference containerRef="%#!$?BASE_DIRECTORY_PATH@webui/nbproject/project.xml%/../lib/external/dataprovider.jar" languageId="1" resourceTypeId="1" containerSize="0">
    </ContainerReference>
   </Resources>
  </Project>

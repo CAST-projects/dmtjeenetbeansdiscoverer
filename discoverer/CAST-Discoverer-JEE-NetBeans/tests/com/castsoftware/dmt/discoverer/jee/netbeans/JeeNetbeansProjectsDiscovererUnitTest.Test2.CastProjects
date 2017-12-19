@@ -1,4 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Projects packageId="453fd072-fec7-4d5d-ae60-a6922ffcbddf" packageName="My Package" packageType="FileSourceCodeRepository" packageConnectionPath="D:/SRC/Discover/NetBeans/PTK/samples">
  <PackageRootPath path=""/>
+ <Project projectId="dbCopier/nbproject/project.xml" projectName="dbCopier" projectType="dmtdevjeetechno.J2EEProject" projectResourceId="dbCopier/nbproject/project.xml" projectPath="dbCopier/nbproject" projectOrigin="NetBeans Java project" selectionStatus="Selected">
+  <Metadata name="#!$?DESCRIPTOR" value="project.xml"/>
+  <Metadata name="#!$?BASE_DIRECTORY_PATH@dbCopier" value="dbCopier/nbproject"/>
+  <Metadata name="#!$?BASE_DIRECTORY_PATH@dbCopier/nbproject/project.xml" value="dbCopier/nbproject"/>
+  <Metadata name="#!$?EXTREF#!$?" value="dbCopier"/>
+  <Languages>
+   <Language languageId="1" languageName="JavaLanguage" sourceFilesPattern="*.java;*.sqlj" sourceFilesCollation="WindowsNTFS">
+    <ResourceTypes>
+     <ResourceType resourceTypeId="1" resourceTypeName="JavaContainerLanguage" resourceFilesCollation="WindowsNTFS" resourceContainersPattern="*.jar" resourceContainersCollation="WindowsNTFS">
+     </ResourceType>
+     <ResourceType resourceTypeId="2" resourceTypeName="XMLLanguage" resourceFilesPattern="*.xml" resourceFilesCollation="WindowsNTFS" resourceContainersCollation="WindowsNTFS">
+     </ResourceType>
+     <ResourceType resourceTypeId="3" resourceTypeName="JavaPropertiesLanguage" resourceFilesPattern="*.properties" resourceFilesCollation="WindowsNTFS" resourceContainersCollation="WindowsNTFS">
+     </ResourceType>
+    </ResourceTypes>
+   </Language>
+   <Language languageId="2" languageName="JavaWebServerLanguage" sourceFilesPattern="*.jsp" sourceFilesCollation="WindowsNTFS">
+    <ResourceTypes>
+     <ResourceType resourceTypeId="1" resourceTypeName="JavaWebContainerLanguage" resourceFilesCollation="WindowsNTFS" resourceContainersPattern="*.ear;*.war" resourceContainersCollation="WindowsNTFS">
+     </ResourceType>
+    </ResourceTypes>
+   </Language>
+   <Language languageId="3" languageName="JavaWebClientLanguage" sourceFilesPattern="*.htm;*.html;*.htc;*.js;*.vbs" sourceFilesCollation="WindowsNTFS">
+   </Language>
+  </Languages>
+  <Sources>
+   <SourceDirectory sourceDirectoryRef="%#!$?BASE_DIRECTORY_PATH@dbCopier/nbproject/project.xml%/../src.dir" languageId="1" sourceDirectorySize="0">
+   </SourceDirectory>
+  </Sources>
+  <Resources>
+   <FileReference fileRef="%#!$?BASE_DIRECTORY_PATH@dbCopier/nbproject/project.xml%/project.properties" languageId="-1" resourceTypeId="0" fileId="453fd072-fec7-4d5d-ae60-a6922ffcbddf:dbCopier/nbproject/project.properties" fileSize="0">
+   </FileReference>
+  </Resources>
+ </Project>
 </Projects>

@@ -28,6 +28,65 @@ public class ProjectFileScanner
      */
     public interface IProjectInterpreter extends IInterpreter
     {
+    	/**
+         * Adding a source folder to the list
+         *
+         * @param sourceFolder
+         *            the added sourceFolder
+         */
+    	void addWebModuleLibrary(String library);
+        /**
+         * Set the webModuleLibraries to the netbean project
+         *
+         */
+    	void setWebModuleLibraries();
+
+    	/**
+         * Adding a source folder to the list
+         *
+         * @param sourceFolder
+         *            the added sourceFolder
+         */
+    	void addWebModuleAdditionalLibrary(String library);
+        /**
+         * Set the webModuleAdditionalLibraries to the netbean project
+         *
+         */
+    	void setWebModuleAdditionalLibraries();
+
+    	/**
+         * Adding a source folder to the list
+         *
+         * @param sourceFolder
+         *            the added sourceFolder
+         */
+        void addSourceRoot(String root);
+        /**
+         * Set the sourceRoots to the netbean project
+         *
+         */
+    	void setSourceRoots();
+    	
+    	/**
+         * Adding a source folder to the list
+         *
+         * @param sourceFolder
+         *            the added sourceFolder
+         */
+        void addTestRoot(String root);
+        /**
+         * Set the testRoots to the netbean project
+         *
+         */
+    	void setTestRoots();
+
+        /**
+         * Interpret the type of the project
+         *
+         * @param type
+         *            the type of the project
+         */
+        void projectType(String type);
 
         /**
          * Interpret the name of the project
@@ -46,6 +105,12 @@ public class ProjectFileScanner
         void addExport(String export);
 
         /**
+         * Set the exports to the netbean project
+         *
+         */
+        void setExports();
+
+        /**
          * Adding a source folder to the list
          *
          * @param sourceFolder
@@ -54,10 +119,10 @@ public class ProjectFileScanner
         void addSourceFolder(String sourceFolder);
 
         /**
-         * Adding the source folders to the project
+         * Set the source folders to the netbean project
          *
          */
-        void addProjectSourceFolders();
+        void setSourceFolders();
 
         /**
          * Adding a classpath defined in a compilation unit to the list
@@ -68,16 +133,17 @@ public class ProjectFileScanner
         void addClasspath(String classpath);
 
         /**
-         * Adding the classpaths to the project
+         * Set the classpaths to the netbean project
          *
          */
-        void addClasspaths();
-}
+        void setClasspaths();
+    }
 
     private static class NetbeansProjectReader extends AbstractXMLFileReader
     {
 
         private IProjectInterpreter interpreter;
+        private NetBeanProject netBeanProject;
 
         private boolean isInProject;
         private boolean isInConfiguration;
@@ -93,17 +159,22 @@ public class ProjectFileScanner
         private boolean isInJavaData;
         private boolean isInCompilationUnit;
         private String classpath;
-        private int ignoredDepth;
+        private boolean isInData;
+        private boolean isInWebModuleLibraries;
+        private boolean isInWebModuleAdditionalLibraries;
+        private boolean isInSourceRoots;
+        private boolean isInTestRoots;
+        private int level = 0;
 
         private NetbeansProjectReader()
         {
             // NOP
         }
 
-        private boolean process(IProjectInterpreter projectInterpreter, String filePath, String content)
+        private NetBeanProject process(IProjectInterpreter projectInterpreter, String filePath, String content)
         {
             interpreter = projectInterpreter;
-
+            
             isInProject = false;
             isInConfiguration = false;
             isInGeneralData = false;
@@ -117,192 +188,317 @@ public class ProjectFileScanner
             exportLocation = "";
             isInJavaData = false;
             isInCompilationUnit = false;
-            ignoredDepth = 0;
+            isInData = false;
+            isInWebModuleLibraries = false;
+            isInWebModuleAdditionalLibraries = false;
+            isInSourceRoots = false;
+            isInTestRoots = false;
+            level = 0;
 
 
             StringReader reader = new StringReader(content);
-            boolean isOk = readContents(interpreter, filePath, reader, false);
+            //boolean isOk = 
+            readContents(interpreter, filePath, reader, false);
 
             interpreter = null;
 
-            return isOk;
+            return netBeanProject;
         }
 
         @Override
         protected void startElement(String elementName, Attributes attributes)
         {
-            if (ignoredDepth > 0)
-                ignoredDepth++;
-            else if (!isInProject)
+            if (!isInProject)
             {
                 if ("project".equals(elementName))
+                {
                     isInProject = true;
-                else
-                    ignoredDepth = 1;
-            }
-            else if (!isInConfiguration)
-            {
-                if ("configuration".equals(elementName))
-                    isInConfiguration = true;
-            }
-            else if (!isInGeneralData)
-            {
-                if ("general-data".equals(elementName))
-                    isInGeneralData = true;
-                else if (!isInJavaData)
-                {
-                	if ("java-data".equals(elementName))
-                        isInJavaData = true;
-                }
-                else
-                {
-                    if (!isInCompilationUnit)
-                    {
-                    	if ("compilation-unit".equals(elementName))
-                    		isInCompilationUnit = true;
-                    }
-                    else if ("classpath".equals(elementName))
-                    	activateCharactersRecording();                	
+
+                    isInConfiguration = false;
+                    
+                    isInGeneralData = false;
+                    // isInName = false;
+                    isInFolders = false;
+                    isInSourceFolder = false;
+                    sourceFolderType = "";
+                    sourceFolderLocation = "";
+                    isInExport = false;
+                    exportType = "";
+                    exportLocation = "";
+                    isInJavaData = false;
+                    isInCompilationUnit = false;
+                    isInData = false;
+                    level = 0;
                 }
             }
             else
             {
-                if (!isInFolders)
-                {
-                    if ("folders".equals(elementName))
-                        isInFolders = true;
-                }
-                else if (!isInSourceFolder)
-                {
-                    if ("source-folder".equals(elementName))
+            	level++;
+            	if (level == 1 && "type".equals(elementName))
+            		activateCharactersRecording();
+            	else if (isInConfiguration)
+            	{
+            		if (isInGeneralData)
+            		{
+                        if (isInFolders)
+                        {
+	                        if (isInSourceFolder)
+	                        {
+	                            if (level == 5)
+	                            {
+	                            	if ("type".equals(elementName))
+	                            		activateCharactersRecording();
+		                            else if ("location".equals(elementName))
+		                                activateCharactersRecording();
+	                            }
+	                        }
+	                        else
+	                        {
+	                        	if (level == 4) {
+		                            if ("source-folder".equals(elementName))
+		                            {
+		                                isInSourceFolder = true;
+		                                sourceFolderType = "";
+		                                sourceFolderLocation = "";
+		                            }
+	                        	}
+	                        }
+                        }
+                        else if (isInExport)
+                        {
+                            if (level == 4)
+                            {
+                            	if ("type".equals(elementName))
+                            		activateCharactersRecording();
+                            	else if ("location".equals(elementName))
+                            		activateCharactersRecording();
+                            }
+                        }
+                        else
+                        {
+                            if (level == 3)
+                            {
+                            	if ("name".equals(elementName))
+                            		activateCharactersRecording();
+                                else if ("folders".equals(elementName))
+                                    isInFolders = true;
+                                else if ("export".equals(elementName))
+                                {
+                                    isInExport = true;
+                                    exportType = "";
+                                    exportLocation = "";
+                                }
+                            }
+                        }
+            		}
+            		else if (isInJavaData)
                     {
-                        isInSourceFolder = true;
-                        sourceFolderType = "";
-                        sourceFolderLocation = "";
+                        if (isInCompilationUnit)
+                        {
+	                        if ("classpath".equals(elementName))
+	                        	activateCharactersRecording();                	
+                        }
+                        else
+                        {
+                        	if ("compilation-unit".equals(elementName))
+                        		isInCompilationUnit = true;
+                        }
                     }
+            		else if (isInData)
+            		{
+                        if (isInWebModuleLibraries)
+                        {
+                            if (level == 5)
+                            {
+		                        if ("file".equals(elementName))
+		                        	activateCharactersRecording();
+                            }
+                        }
+                        else if (isInWebModuleAdditionalLibraries)
+                        {
+                            if (level == 5)
+                            {
+                            	if ("file".equals(elementName))
+                            		activateCharactersRecording();
+                            }
+                        }
+                        else if (isInSourceRoots)
+                        {
+	                        if ("root".equals(elementName))
+	                        {
+	                        	String root = attributes.getValue(attributes.getIndex("id"));
+	                        	interpreter.addSourceRoot(root);
+	                        }
+                        }
+                        else if (isInTestRoots)
+                        {
+	                        if ("root".equals(elementName))
+	                        {
+	                        	String root = attributes.getValue(attributes.getIndex("id"));
+	                        	interpreter.addTestRoot(root);
+	                        }
+                        }
+                        else
+                        {
+                        	if (level == 3) 
+                        	{
+                        		if ("name".equals(elementName))
+                        			activateCharactersRecording();
+                        		else if ("web-module-libraries".equals(elementName))
+	                        		isInWebModuleLibraries = true;
+	                        	else if ("web-module-additional-libraries".equals(elementName))
+	                        		isInWebModuleAdditionalLibraries = true;
+	                        	else if ("source-roots".equals(elementName))
+	                        		isInSourceRoots = true;
+	                        	else if ("test-roots".equals(elementName))
+	                        		isInTestRoots = true;
+                        	}
+                        }            			
+            		}
                     else
-                        ignoredDepth = 1;
-                }
-                else
-                {
-                    if ("type".equals(elementName))
-                        activateCharactersRecording();
-                    else if ("location".equals(elementName))
-                        activateCharactersRecording();
-                }
-
-                if (!isInExport)
-                {
-                    if ("export".equals(elementName))
                     {
-                        isInExport = true;
-                        exportType = "";
-                        exportLocation = "";
+                    	if (level == 2)
+                    	{
+	                        if ("general-data".equals(elementName))
+	                            isInGeneralData = true;
+	                        else if ("java-data".equals(elementName))
+	                            isInJavaData = true;
+	                        else if ("data".equals(elementName))
+	                        	isInData = true;
+                    	}
                     }
                 }
                 else
                 {
-                    if ("type".equals(elementName))
-                        activateCharactersRecording();
-                    else if ("location".equals(elementName))
-                        activateCharactersRecording();
+                    if (level == 1 && "configuration".equals(elementName))
+                        isInConfiguration = true;
                 }
-
-                if ("name".equals(elementName))
-                    activateCharactersRecording();
             }
+
         }
 
         @Override
         protected void endElement(String elementName)
         {
-            if (ignoredDepth > 0)
-                ignoredDepth--;
-            else if (!isInProject)
+            if (!isInProject)
+            	return;
+
+            if (level == 0 && "project".equals(elementName))
+            	isInProject = false;
+            else if (level == 1 && "type".equals(elementName))
             {
-                // NOP
+            	interpreter.projectType(deactivateCharactersRecording());
             }
-            else if (!isInConfiguration)
+            else if (level == 1 && "configuration".equals(elementName))
+                isInConfiguration = false;
+            else if (level == 2)
             {
-                if ("project".equals(elementName))
-                    isInProject = false;
+            	if ("general-data".equals(elementName))
+	            	isInGeneralData = false;
+	            else if ("java-data".equals(elementName))
+	            {
+	            	isInJavaData = false;
+	            	interpreter.setClasspaths();
+	            }
+	            else if ("data".equals(elementName))
+	            	isInData = false;
             }
-            else if (!isInGeneralData)
+            else if (level == 3)
             {
-                if (!isInJavaData)
+            	if ("compilation-unit".equals(elementName))
+            	{
+            		isInCompilationUnit = false;
+            		// separator used in classpath can be either : or ;
+            		List<String> classpathList = StringHelper.getStringList(classpath, ":");
+            		for (String path : classpathList)
+            		{
+            			List<String> classpathList2 = StringHelper.getStringList(path, ";");
+                		for (String path2 : classpathList2)
+                			interpreter.addClasspath(path2);
+            		}
+                	classpath = "";
+            	}
+                else if (isInGeneralData)
                 {
-                	if ("configuration".equals(elementName))
-                        isInConfiguration = false;
+    	            if ("name".equals(elementName))
+                        interpreter.projectName(deactivateCharactersRecording());
+    	            else if (isInExport && "export".equals(elementName))
+                    {
+                        isInExport = false;
+                        interpreter.addExport(exportLocation);
+                    }
+                    else if (isInFolders && "folders".equals(elementName))
+                    {
+                        isInFolders = false;
+                        interpreter.setSourceFolders();
+                    }
                 }
-                else
+                else if (isInData)
                 {
-                	if (!isInCompilationUnit)
+    	            if ("name".equals(elementName))
+                        interpreter.projectName(deactivateCharactersRecording());
+    	            else if ("web-module-libraries".equals(elementName))
+    	            {
+                		isInWebModuleLibraries = false;
+                		interpreter.setWebModuleLibraries();
+    	            }
+    	            else if ("web-module-additional-libraries".equals(elementName))
+    	            {
+                		isInWebModuleAdditionalLibraries = false;
+                		interpreter.setWebModuleAdditionalLibraries();
+    	            }
+                	else if ("source-roots".equals(elementName))
                 	{
-                		if ("java-data".equals(elementName))
-                		{
-                        	isInJavaData = false;
-                        	interpreter.addClasspaths();
-                		}
+                		isInSourceRoots = false;
+                		interpreter.setSourceRoots();
                 	}
-                	else if ("compilation-unit".equals(elementName))
+                	else if ("test-roots".equals(elementName))
                 	{
-                		isInCompilationUnit = false;
-                		// separator used in classpath can be either : or ;
-                		List<String> classpathList = StringHelper.getStringList(classpath, ":");
-                		for (String path : classpathList)
-                		{
-                			List<String> classpathList2 = StringHelper.getStringList(path, ";");
-                    		for (String path2 : classpathList2)
-                    			interpreter.addClasspath(path2);
-                		}
-                    	classpath = "";
+                		isInTestRoots = false;
+    	            	interpreter.setTestRoots();
                 	}
-                	else if ("classpath".equals(elementName))
-                	{
-                		classpath = deactivateCharactersRecording();
-                	}
-                }                
-            }
-            else if (!isInFolders)
-            {
-                if ("general-data".equals(elementName))
-                    isInGeneralData = false;
-                else if ("export".equals(elementName))
-                {
-                    isInExport = false;
-                    interpreter.addExport(exportLocation);
                 }
             }
-            else if (!isInSourceFolder)
+            else if (level == 4)
             {
-                if ("folders".equals(elementName))
-                {
-                    isInFolders = false;
-                    interpreter.addProjectSourceFolders();
-                }
-            }
-            else
-            {
-                if ("source-folder".equals(elementName))
+            	if (isInCompilationUnit && "classpath".equals(elementName))
+            	{
+            		classpath = deactivateCharactersRecording();
+            	}
+            	else if (isInFolders && "source-folder".equals(elementName))
                 {
                     isInSourceFolder = false;
                     if ("java".equals(sourceFolderType))
                         interpreter.addSourceFolder(sourceFolderLocation);
                 }
+                else if (isInExport)
+                {
+                	if ("type".equals(elementName))
+                		exportType = deactivateCharactersRecording();
+                	else if ("location".equals(elementName))
+                		exportLocation = deactivateCharactersRecording();
+                }
             }
-            if (isInGeneralData && "name".equals(elementName))
-                interpreter.projectName(deactivateCharactersRecording());
-            else if (isInSourceFolder && "type".equals(elementName))
-                sourceFolderType = deactivateCharactersRecording();
-            else if (isInSourceFolder && "location".equals(elementName))
-                sourceFolderLocation = deactivateCharactersRecording();
-            else if (isInExport && "type".equals(elementName))
-                exportType = deactivateCharactersRecording();
-            else if (isInExport && "location".equals(elementName))
-                exportLocation = deactivateCharactersRecording();
+            else if (level == 5)
+            {
+                if (isInSourceFolder && "type".equals(elementName))
+                    sourceFolderType = deactivateCharactersRecording();            	
+                else if (isInSourceFolder && "location".equals(elementName))
+                    sourceFolderLocation = deactivateCharactersRecording();
+                else if (isInWebModuleLibraries && "file".equals(elementName))
+                {
+                    String library = deactivateCharactersRecording();
+                    interpreter.addWebModuleLibrary(library);
+                }
+                else if (isInWebModuleAdditionalLibraries && "file".equals(elementName))
+                {
+                    String library = deactivateCharactersRecording();
+                    interpreter.addWebModuleAdditionalLibrary(library);
+                }
+            }
+            level--;
 
         }
-
     }
 
     private ProjectFileScanner()
@@ -321,7 +517,7 @@ public class ProjectFileScanner
      *            the file content to scan.
      * @return {@code true} if no error was encountered during scanning. {@code false} otherwise.
      */
-    public static boolean scan(IProjectInterpreter interpreter, String projectFilePath, String projectContent)
+    public static NetBeanProject scan(IProjectInterpreter interpreter, String projectFilePath, String projectContent)
     {
         NetbeansProjectReader reader = new NetbeansProjectReader();
 
@@ -330,21 +526,28 @@ public class ProjectFileScanner
 
     private static class ProjectRecorder implements IProjectInterpreter
     {
-
+    	private NetBeanProject netBeanProject;
         private final Project project;
         private final Set<String> exports;
         private final Set<String> sourceFolders;
+        private final Set<String> testSourceFolders;
+        private final Set<String> sourceRoots;
+        private final Set<String> testRoots;
+        private final Set<String> webModuleLibraries;
+        private final Set<String> webModuleAdditionalLibraries;
         private final Set<String> classpaths;
-        private final int javaLanguageId;
-        private final int javaContainerLanguageId;
 
-        private ProjectRecorder(Project project, Set<String> exports, int javaLanguageId, int javaContainerLanguageId)
+        private ProjectRecorder(Project project, NetBeanProject netBeanProject)
         {
+        	this.netBeanProject = netBeanProject;
             this.project = project;
-            this.exports = exports;
-            this.javaLanguageId = javaLanguageId;
-            this.javaContainerLanguageId = javaContainerLanguageId;
+            exports = new HashSet<String>();
             sourceFolders = new HashSet<String>();
+            testSourceFolders = new HashSet<String>();
+            sourceRoots = new HashSet<String>();
+            testRoots = new HashSet<String>();
+            webModuleLibraries = new HashSet<String>();
+            webModuleAdditionalLibraries = new HashSet<String>();
             classpaths = new HashSet<String>();
         }
 
@@ -375,16 +578,18 @@ public class ProjectFileScanner
         @Override
         public void projectName(String name)
         {
-            project.setName(name);
-            project.addMetadata(IResourceReadOnly.METADATA_REFKEY, name);
+        	netBeanProject.setName(name);
         }
 
         @Override
         public void addExport(String export)
         {
             exports.add(export);
-
         }
+		@Override
+		public void setExports() {
+			netBeanProject.setExports(exports);
+		}
 
         @Override
         public void addSourceFolder(String sourceFolder)
@@ -393,10 +598,9 @@ public class ProjectFileScanner
         }
 
         @Override
-        public void addProjectSourceFolders()
+        public void setSourceFolders()
         {
-            for (String sourceFolder : sourceFolders)
-                project.addSourceDirectoryReference(buildPackageRelativePath(project, "../".concat(sourceFolder)), javaLanguageId);
+        	netBeanProject.setSourceFolders(sourceFolders);
         }
 
 		@Override
@@ -405,17 +609,49 @@ public class ProjectFileScanner
 		}
 
 		@Override
-		public void addClasspaths() {
-            for (String path : classpaths)
-            {
-                if (path.toLowerCase().endsWith(".jar"))
-                    project.addContainerReference(buildPackageRelativePath(project, "../".concat(path)), javaLanguageId,
-                        javaContainerLanguageId);
-                else
-                	// do not add the classpath if it's already the sources
-                	if (!sourceFolders.contains(path))
-                		project.addDirectoryReference(buildPackageRelativePath(project, "../".concat(path)), javaLanguageId, javaContainerLanguageId);
-            }
+		public void setClasspaths() {
+			netBeanProject.setClasspaths(classpaths);
+		}
+
+		@Override
+		public void projectType(String type) {
+			netBeanProject.setType(type);			
+		}
+
+		@Override
+    	public void addWebModuleLibrary(String library) {
+			webModuleLibraries.add(library);
+		}
+		@Override
+		public void setWebModuleLibraries() {
+			netBeanProject.setWebModuleLibraries(webModuleLibraries);
+		}
+
+		@Override
+    	public void addWebModuleAdditionalLibrary(String library) {
+			webModuleAdditionalLibraries.add(library);
+		}
+		@Override
+		public void setWebModuleAdditionalLibraries() {
+			netBeanProject.setWebModuleAdditionalLibraries(webModuleAdditionalLibraries);
+		}
+
+		@Override
+		public void addSourceRoot(String root) {
+			sourceRoots.add(root);
+		}
+		@Override
+		public void setSourceRoots() {
+        	netBeanProject.setSourceRoots(sourceRoots);
+		}
+
+		@Override
+		public void addTestRoot(String root) {
+			testRoots.add(root);
+		}
+		@Override
+		public void setTestRoots() {
+        	netBeanProject.setTestRoots(testRoots);
 		}
     }
 
@@ -452,40 +688,11 @@ public class ProjectFileScanner
      *            the java container language ID to use to reference jar files or classpath.
      * @return null if an error was encountered during scanning. Otherwise a set containing the project natures.
      */
-    public static Set<String> scan(Project project, String projectContent, IProjectsDiscovererUtilities projectsDiscovererUtilities)
+    public static NetBeanProject scan(Project project, String projectContent, IProjectsDiscovererUtilities projectsDiscovererUtilities, NetBeanProject netBeanProject)
     {
-    	int javaLanguageId = -1;
-    	int javaContainerLanguageId = -1;
-        Set<String> exports = new HashSet<String>();
-
-        for (LanguageConfiguration languageConfiguration : projectsDiscovererUtilities.getProjectTypeConfiguration(project.getType()).getLanguageConfigurations())
-        {
-            int languageId = languageConfiguration.getLanguageId();
-            if ("JavaLanguage".equals(languageConfiguration.getLanguageName()))
-            {
-            	javaLanguageId = languageId;
-            	//TODO: not available in 7.3.x API => hardcoded value
-            	/*
-                if ("JavaContainerLanguage".equals(languageConfiguration.getLanguageName()))
-                	javaContainerLanguageId = languageId;
-                */
-                if (javaContainerLanguageId == -1)
-                {
-                	javaContainerLanguageId = 1;
-                    //Logging.managedError("cast.dmt.discover.jee.netbeans.getJavaContainerLanguageFailure");
-                }
-            	break;
-            }
-        }
-        if (javaLanguageId == -1)
-        {
-            Logging.managedError("cast.dmt.discover.jee.netbeans.getJavaLanguageFailure");
-        }
-        
-        IProjectInterpreter interpreter = new ProjectRecorder(project, exports, javaLanguageId, javaContainerLanguageId);
-        if (!scan(interpreter, project.getPath(), projectContent))
-            return null;
-        return exports;
+        //IProjectInterpreter interpreter = new ProjectRecorder(project, exports, javaLanguageId, javaContainerLanguageId);
+        IProjectInterpreter interpreter = new ProjectRecorder(project, netBeanProject);
+        return scan(interpreter, project.getPath(), projectContent);
     }
 
 }

@@ -11,7 +11,7 @@
                 <value formula="true">'project.xml'</value>
             </field>
             <field override="true" symbol="resourceProjectsPatterns">
-                <value formula="true">'genfiles.properties'</value>
+                <value formula="true">'project.properties'</value>
             </field>
         </entity>
 
