@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <messages>
 	<language name="English">
-		<!-- ProjectFileScanner -->
-		<message id="cast.dmt.discover.jee.netbeans.getJavaLanguageFailure" format="Internal error while getting the information from the plugin. The JavaLanguage was not found."/>
-		<message id="cast.dmt.discover.jee.netbeans.getJavaContainerLanguageFailure" format="Internal error while getting the information from the plugin. The JavaContainerLanguage was not found."/>
-			
-		<!-- JeeEclipseProjectsDiscoverer -->
-    <!--
-		<message id="cast.dmt.discover.eclipse.jee.classpathFileNotFound" format="Eclipse project with a java nature but without a .classpath file is ignored: %PROJECT_PATH%"/>
-		<message id="cast.dmt.discover.eclipse.jee.classpathFileFound" format="The .classpath file of the eclipse project has been found: %PROJECT_PATH%"/>
-		<message id="cast.dmt.discover.eclipse.jee.settingsFileNotFound" format="No eclipse settings file found for the project: %PROJECT_PATH%"/>
-		<message id="cast.dmt.discover.eclipse.jee.settingsFileFound" format="Settings file found for the project: %PROJECT_PATH%"/>
-		<message id="cast.dmt.discover.eclipse.jee.multipleWebInfWebXmlFound" format="Multiple web application descriptor files has been found. Only the first one will be used in the project configuration: %PROJECT_PATH%"/>
-		<message id="cast.dmt.discover.eclipse.jee.webInfWebXmlNotFound" format="No web application descriptor file found for the project: %PROJECT_PATH%"/>
-		<message id="cast.dmt.discover.eclipse.jee.secondPassAnalysis" format="Starting second pass of the project analysis"/>
-		<message id="cast.dmt.discover.eclipse.jee.noJavaNature" format="Eclipse project without a java nature is ignored by this discoverer: %PROJECT_PATH%"/>	
-    -->		
+		<!-- Error -->
+		<message id="cast.dmt.discover.jee.netbeans.getJavaLanguageFailure" format="Internal error while getting the information from the plugin. The JavaLanguage was not found." remediation="Open a support ticket to investigate the extension and its compatibility with the version of CAST AIP."/>
+		<message id="cast.dmt.discover.jee.netbeans.getJavaContainerLanguageFailure" format="Internal error while getting the information from the plugin. The JavaContainerLanguage was not found." remediation="Open a support ticket to investigate the extension and its compatibility with the version of CAST AIP."/>
+		<!-- Warning -->
+		<message id="cast.dmt.discover.jee.netbeans.unknownType" format="The type %TYPE% is not supported." remediation="The discovery of some information might be missing. Please contact the provider of the extension."/>
+		<message id="cast.dmt.discover.jee.netbeans.missingProjectProperties" format="The project.properties file has not been found for %PROJECT_PATH%." remediation="The discovery of some information might be missing. Please contact the provider of the extension."/>
+		<!-- Info -->
+		<message id="cast.dmt.discover.jee.netbeans.buildProjectStart" format="Start processing of project %PATH%"/>
+		<message id="cast.dmt.discover.jee.netbeans.buildProjectEnd" format="End processing of project %PATH%"/>
+		<message id="cast.dmt.discover.jee.netbeans.reparseProjectStart" format="Start reparsing of project %PATH%"/>
+		<message id="cast.dmt.discover.jee.netbeans.reparseProjectEnd" format="End reparsing of project %PATH%"/>
 	</language>
 </messages>

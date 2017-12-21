@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/10/nuspec.xsd">
+  <metadata>
+    <id>com.castsoftware.dmtjeenetbeansdiscoverer</id>
+    <version>_VERSION_-build_BUILDNO_</version>
+    <title>JEE NetBeans Discoverer</title>
+    <authors>CAST Product</authors>
+    <owners>CAST</owners>
+    <licenseUrl>https://help.castsoftware.com/hc/en-us/articles/212612648-AIP-Extension-License</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <projectUrl>http://doc.castsoftware.com/display/DOCEXT/JEE+NetBeans+Discoverer+1.0</projectUrl>
+    <iconUrl>https://github.com/CAST-projects/dmtjeenetbeansdiscoverer/raw/master/com_castsoftware_dmtjeenetbeansdiscoverer.png</iconUrl>
+    <releaseNotes>http://doc.castsoftware.com/display/DOCEXT/JEE+NetBeans+Discoverer+1.0+-+Release+Notes</releaseNotes>
+    <description>Support for discovering NetBeans projects. It should be used when the NetBeans IDE is used for developping the application. The project files (nbproject/project.xml and nbproject/project.properties) must be delivered with the source code.</description>
+    <dependencies>
+      <dependency id="CAIP" version="8.0.0"/>
+    </dependencies>
+		<tags>DMT DISCOVER JEE CAIP8.0</tags>		
+ </metadata>
+  <files>
+    <file src="TOOLS\**" target="TOOLS" />    
+    <file src="JEE-NetBeans Technology Extension Version.txt" target="JEE-NetBeans Technology Extension Version.txt" />    
+    <file src="readme.html" target="readme.html" />    
+  </files>  
+</package>

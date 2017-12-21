@@ -77,6 +77,7 @@ public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapte
     public void buildProject(String relativeFilePath, String content, Project project,
         IProjectsDiscovererUtilities projectsDiscovererUtilities)
     {
+    	Logging.info("cast.dmt.discover.jee.netbeans.buildProjectStart", "PATH", project.getPath());
     	if (!isConfigurationChecked)
     	{
     		Iterable<LanguageConfiguration> languageConfigurations = projectsDiscovererUtilities.getProjectTypeConfiguration(project.getType()).getLanguageConfigurations();
@@ -102,10 +103,18 @@ public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapte
         	projectsDiscovererUtilities.deleteProject(project.getId());
         	return;
         }
+        else
+        {
+        	if (!("org.netbeans.modules.java.j2seproject".equals(netBeanProject.getType())
+        			|| "org.netbeans.modules.ant.freeform".equals(netBeanProject.getType())
+        			|| "org.netbeans.modules.web.project".equals(netBeanProject.getType())))
+        		Logging.warn("cast.dmt.discover.jee.netbeans.unknownType", "TYPE", netBeanProject.getType());
+        }
         project.setName(netBeanProject.getName());
         project.addMetadata(IResourceReadOnly.METADATA_REFKEY, netBeanProject.getName());
         netbeanProjects.put(project.getPath(), netBeanProject);
     	addProjectRelativeFileRef(project, "project.properties");
+    	Logging.info("cast.dmt.discover.jee.netbeans.buildProjectEnd", "PATH", project.getPath());
     }
 
     private static ResourceReference addProjectRelativeFileRef(Project project, String path)
@@ -120,6 +129,7 @@ public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapte
     public boolean reparseProject(Project project, String projectContent, IReferencedContents contents,
         IProjectsDiscovererUtilities projectsDiscovererUtilities)
     {
+    	Logging.info("cast.dmt.discover.jee.netbeans.reparseProjectStart", "PATH", project.getPath());
         String projectProperties = project.buildPackageRelativePath("project.properties");
         String projectPropertiesContent = contents.getContent(projectProperties);
     	NetBeanProject netBeanProject = netbeanProjects.get(project.getPath());
@@ -127,7 +137,7 @@ public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapte
     	{
             Properties props = null;
             if (StringHelper.isEmpty(projectPropertiesContent))
-                Logging.info("cast.dmt.discover.eclipse.jee.classpathFileNotFound", "PROJECT_PATH", project.getPath());
+                Logging.info("cast.dmt.discover.jee.netbeans.missingProjectProperties", "PROJECT_PATH", project.getPath());
             else
             {
         		props = readProjectProperties(netBeanProject, projectPropertiesContent);
@@ -135,6 +145,7 @@ public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapte
     		finalizeProject(project,netBeanProject, props);
         }
         project.removeResourceReference(projectPropertiesContent);
+    	Logging.info("cast.dmt.discover.jee.netbeans.reparseProjectEnd", "PATH", project.getPath());
     	return false;
     }
     
