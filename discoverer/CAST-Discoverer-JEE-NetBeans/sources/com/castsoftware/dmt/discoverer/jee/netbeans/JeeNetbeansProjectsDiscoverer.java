@@ -157,8 +157,10 @@ public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapte
     	try {
 			props.load(reader);
 			project.resolveProperties(props);
+		} catch (IllegalArgumentException e) {
+			Logging.warn("cast.dmt.discover.jee.netbeans.loadProjectPropertiesIllegalArgumentException", "PROJECT_PATH", project.getProjectPath());
 		} catch (IOException e) {
-			Logging.warn("cast.dmt.discover.eclipse.jee.classpathFileFound", "PROJECT_PATH", project.getProjectPath());
+			Logging.warn("cast.dmt.discover.jee.netbeans.loadProjectPropertiesIOException", "PROJECT_PATH", project.getProjectPath());
 		}
     	return props;
     }

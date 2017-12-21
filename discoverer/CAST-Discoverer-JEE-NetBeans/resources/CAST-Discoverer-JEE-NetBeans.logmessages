@@ -7,6 +7,8 @@
 		<!-- Warning -->
 		<message id="cast.dmt.discover.jee.netbeans.unknownType" format="The type %TYPE% is not supported." remediation="The discovery of some information might be missing. Please contact the provider of the extension."/>
 		<message id="cast.dmt.discover.jee.netbeans.missingProjectProperties" format="The project.properties file has not been found for %PROJECT_PATH%." remediation="The discovery of some information might be missing. Please contact the provider of the extension."/>
+		<message id="cast.dmt.discover.jee.netbeans.loadProjectPropertiesIllegalArgumentException" format="IllegalArgumentException while loading the project.properties file for %PROJECT_PATH%." remediation="Check if a malformed Unicode escape appears in the project.properties file."/>
+		<message id="cast.dmt.discover.jee.netbeans.loadProjectPropertiesIOException" format="IOException while loading the project.properties file for %PROJECT_PATH%." remediation="Check the content of the project.properties file."/>
 		<!-- Info -->
 		<message id="cast.dmt.discover.jee.netbeans.buildProjectStart" format="Start processing of project %PATH%"/>
 		<message id="cast.dmt.discover.jee.netbeans.buildProjectEnd" format="End processing of project %PATH%"/>
