@@ -1,6 +1,5 @@
 package com.castsoftware.dmt.discoverer.jee.netbeans;
 
-import java.io.File;
 import java.io.StringReader;
 import java.util.HashSet;
 import java.util.List;
@@ -9,29 +8,25 @@ import java.util.Set;
 import org.xml.sax.Attributes;
 
 import com.castsoftware.dmt.engine.discovery.IProjectsDiscovererUtilities;
-import com.castsoftware.dmt.engine.discovery.ProjectsDiscovererWrapper.ProfileOrProjectTypeConfiguration.LanguageConfiguration;
-import com.castsoftware.dmt.engine.project.IResourceReadOnly;
-import com.castsoftware.dmt.engine.project.Profile;
 import com.castsoftware.dmt.engine.project.Project;
 import com.castsoftware.util.StringHelper;
-import com.castsoftware.util.logger.Logging;
 import com.castsoftware.util.xml.AbstractXMLFileReader;
 import com.castsoftware.util.xml.IInterpreter;
 
 /**
- * Scanner for Eclipse .project files.
+ * Scanner for NetBeans project.xml files.
  */
 public class ProjectFileScanner
 {
     /**
-     * Interpreter of an eclipse .project file
+     * Interpreter of a NetBeans project.xml file
      */
     public interface IProjectInterpreter extends IInterpreter
     {
     	/**
          * Adding a source folder to the list
          *
-         * @param sourceFolder
+         * @param library
          *            the added sourceFolder
          */
     	void addWebModuleLibrary(String library);
@@ -154,7 +149,6 @@ public class ProjectFileScanner
         private String sourceFolderType;
         private String sourceFolderLocation;
         private boolean isInExport;
-        private String exportType;
         private String exportLocation;
         private boolean isInJavaData;
         private boolean isInCompilationUnit;
@@ -184,7 +178,6 @@ public class ProjectFileScanner
             sourceFolderType = "";
             sourceFolderLocation = "";
             isInExport = false;
-            exportType = "";
             exportLocation = "";
             isInJavaData = false;
             isInCompilationUnit = false;
@@ -223,7 +216,6 @@ public class ProjectFileScanner
                     sourceFolderType = "";
                     sourceFolderLocation = "";
                     isInExport = false;
-                    exportType = "";
                     exportLocation = "";
                     isInJavaData = false;
                     isInCompilationUnit = false;
@@ -285,7 +277,6 @@ public class ProjectFileScanner
                                 else if ("export".equals(elementName))
                                 {
                                     isInExport = true;
-                                    exportType = "";
                                     exportLocation = "";
                                 }
                             }
@@ -473,9 +464,7 @@ public class ProjectFileScanner
                 }
                 else if (isInExport)
                 {
-                	if ("type".equals(elementName))
-                		exportType = deactivateCharactersRecording();
-                	else if ("location".equals(elementName))
+            		if ("location".equals(elementName))
                 		exportLocation = deactivateCharactersRecording();
                 }
             }
@@ -527,23 +516,19 @@ public class ProjectFileScanner
     private static class ProjectRecorder implements IProjectInterpreter
     {
     	private NetBeanProject netBeanProject;
-        private final Project project;
         private final Set<String> exports;
         private final Set<String> sourceFolders;
-        private final Set<String> testSourceFolders;
         private final Set<String> sourceRoots;
         private final Set<String> testRoots;
         private final Set<String> webModuleLibraries;
         private final Set<String> webModuleAdditionalLibraries;
         private final Set<String> classpaths;
 
-        private ProjectRecorder(Project project, NetBeanProject netBeanProject)
+        private ProjectRecorder(NetBeanProject netBeanProject)
         {
         	this.netBeanProject = netBeanProject;
-            this.project = project;
             exports = new HashSet<String>();
             sourceFolders = new HashSet<String>();
-            testSourceFolders = new HashSet<String>();
             sourceRoots = new HashSet<String>();
             testRoots = new HashSet<String>();
             webModuleLibraries = new HashSet<String>();
@@ -655,26 +640,6 @@ public class ProjectFileScanner
 		}
     }
 
-    private static String buildPackageRelativePath(Project project, String projectPath)
-    {
-        if (projectPath.startsWith("/"))
-        {
-            int slashPos = projectPath.indexOf('/', 1);
-            if (slashPos == -1)
-                return projectPath.substring(1);
-
-            String projectRelativePath = projectPath.substring(slashPos + 1);
-            String projectName = projectPath.substring(1, slashPos);
-
-            return Profile.buildPackageRelativePath(projectName, projectRelativePath);
-        }
-
-        if (new File(projectPath).isAbsolute())
-            return projectPath;
-
-        return project.buildPackageRelativePath(projectPath);
-    }
-
     /**
      * Scan a .project file, add info to the project and return the project natures.
      *
@@ -690,8 +655,7 @@ public class ProjectFileScanner
      */
     public static NetBeanProject scan(Project project, String projectContent, IProjectsDiscovererUtilities projectsDiscovererUtilities, NetBeanProject netBeanProject)
     {
-        //IProjectInterpreter interpreter = new ProjectRecorder(project, exports, javaLanguageId, javaContainerLanguageId);
-        IProjectInterpreter interpreter = new ProjectRecorder(project, netBeanProject);
+        IProjectInterpreter interpreter = new ProjectRecorder(netBeanProject);
         return scan(interpreter, project.getPath(), projectContent);
     }
 

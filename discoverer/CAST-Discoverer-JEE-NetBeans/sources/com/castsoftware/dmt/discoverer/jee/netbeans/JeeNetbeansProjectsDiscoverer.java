@@ -20,15 +20,13 @@ import com.castsoftware.util.StringHelper;
 import com.castsoftware.util.logger.Logging;
 
 /**
- * Basic discoverer for
+ * Basic discoverer for NetBeans project
  */
 public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapter
 {
     private final Map<String,NetBeanProject> netbeanProjects;
     private static final int JAVA_LANGUAGE_ID = 1;
     private static final int JAVA_CONTAINER_LANGUAGE_ID = 1;
-    private static final int JAVA_XML_LANGUAGE_ID = 2;
-    private static final int JAVA_PROPERTIES_LANGUAGE_ID = 3;
     private Boolean isIncludeTest = false;
     private Boolean isConfigurationChecked = false;
     private Boolean isConfigurationGood = false;
@@ -52,7 +50,6 @@ public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapte
 	        if ("JavaLanguage".equals(languageConfiguration.getLanguageName()))
 	        {
 	        	javaLanguageId = languageId;
-	        	//TODO: not available in 7.3.x API => hardcoded value
 	        	/*
 	            if ("JavaContainerLanguage".equals(languageConfiguration.getLanguageName()))
 	            	javaContainerLanguageId = languageId;
@@ -60,7 +57,6 @@ public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapte
 	            if (javaContainerLanguageId == -1)
 	            {
 	            	javaContainerLanguageId = 1;
-	                //Logging.managedError("cast.dmt.discover.jee.netbeans.getJavaContainerLanguageFailure");
 	            }
 	        	break;
 	        }
@@ -120,7 +116,6 @@ public class JeeNetbeansProjectsDiscoverer extends BasicProjectsDiscovererAdapte
     private static ResourceReference addProjectRelativeFileRef(Project project, String path)
     {
         String fullPath = project.buildPackageRelativePath(path);
-        //String fullPath = project.getPath() + "/" + path;
 
         return project.addFileReference(fullPath, Project.PROJECT_LANGUAGE_ID, IResourceReadOnly.RESOURCE_TYPE_NEUTRAL_ID);
     }
